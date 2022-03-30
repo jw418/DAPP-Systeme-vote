@@ -161,15 +161,16 @@ class App extends Component {
             </Card.Body>
             <Card.Body>
               <Form.Group controlId="formAddress">
-                <Form.Control type="text" id="address" placeholder="Autoriser un nouveau compte (Only Admin)"
+                <Form.Control type="text" id="address" placeholder="Autoriser un nouveau compte (Only Admin)" 
                 ref={(input) => { this.address = input }}
                 />
               </Form.Group>
-              <Button onClick={ this.whitelist } variant="dark" > Autoriser </Button>
+              <br></br>
+              <Button onClick={ this.whitelist } variant="dark" padding="10rem"> Autoriser </Button>
             </Card.Body>
           </Card>                                        
         </div>
-     
+        <br></br>
 
         <div style={{display: 'flex', justifyContent: 'center'}}>
           <Card style={{ width: '50rem' }}>
@@ -217,6 +218,7 @@ class App extends Component {
                 ref={(input) => { this.proposal = input }}
                 />
               </Form.Group>
+              <br></br>
               <Button onClick={ this.getarray } variant="dark" > Déposer </Button>
             </Card.Body>
           </Card>
@@ -255,6 +257,7 @@ class App extends Component {
                 ref={(input) => { this.vote = input }}
                 />
               </Form.Group>
+              <br></br>
               <Button onClick={ this.votefor } variant="dark" > Voter </Button>
             </Card.Body>
           </Card>
@@ -289,7 +292,7 @@ class App extends Component {
             <Card.Body>
             <Button onClick={ this.runGetwinner} variant="dark" > Résultat </Button>
             <tbody>              
-                  la proposition gagnante est la numéro : #{winnerid} {this.runGetwinner}              
+                  la proposition gagnante est la numéro : #{winnerid}          
             </tbody>
             </Card.Body>
           </Card>
