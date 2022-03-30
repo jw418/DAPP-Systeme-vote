@@ -1,21 +1,27 @@
 // SPDX-License-Identifier: MIT
 
 pragma solidity 0.8.13;
-import "@openzeppelin/contracts/access/Ownable.sol";
+import "../client/node_modules/@openzeppelin/contracts/access/Ownable.sol";
 
+/// @title Systeme de Vote
+/// @author jw418
+/// @notice You can use this contract for only the most basic simulation
+/// @dev seul le owner peut ajouter des addresses a la WL ou changer le workflow status.
+/// @custom:experimental This is an experimental contract.(Formation Digitt)
 contract Voting is Ownable {
 
     struct Voter {
-        bool isRegistered;
-        bool hasVoted;
-        uint256 votedProposalId;
+        bool isRegistered;  // if true, that person already on the whitelist
+        bool hasVoted;  // if true, that person already voted
+        uint256 votedProposalId;  // index of the voted proposal
     }
 
     struct Proposal {
-        string description;
-        uint256 voteCount;
+        string description;  // descripton de la proposition
+        uint256 voteCount; //  number of accumulated votes
     }
 
+    /// @dev le workflow status ne va que dans un seul sens (pas de boucle possible)
     enum WorkflowStatus {
         RegisteringVoters,
         ProposalsRegistrationStarted,
@@ -25,14 +31,17 @@ contract Voting is Ownable {
         VotesTallied
     }
 
+    /// @dev on met le workflow statut sur l etape 1
     WorkflowStatus public currentStatus = WorkflowStatus.RegisteringVoters;
 
     mapping(address => Voter) public voters;
+    mapping(address=> bool) public _whitelist;
+    address[] public addresses;
     Proposal[] public proposals;
     uint256 public numberOfProposals;
-    uint256 winningProposalId;
+    uint256 public winnerId;
 
-    
+    // les event pour transmettre au front
     event VoterRegistered(address voterAddress);    
     event WorkflowStatusChange(WorkflowStatus previousStatus,
     WorkflowStatus newStatus);
@@ -40,7 +49,8 @@ contract Voting is Ownable {
     event Voted(address voter, uint256 proposalId);
 
     
-    
+    /// @notice pour ajouter des addresses a la WL
+    /// @param _address address a ajouté a la WL
     function isWhitelisted(address _address) external onlyOwner {                
         require(currentStatus == WorkflowStatus.RegisteringVoters,"the registration period for the whitelist is over");
         require(!voters[_address].isRegistered,"This voters is already registered");
@@ -50,7 +60,13 @@ contract Voting is Ownable {
         emit VoterRegistered(_address);
     }
 
+    /// @notice obtenir la liste des adresses sur la WL
+    function getAddresses() public view returns(address[] memory){
+        return addresses;
+    }
 
+    /// @notice pour demarrer l'enregistrement des propositions
+    /// @dev une fois la fonction appelée le statut change, on ne peut donc plus ajouter d addreses a la WL!!
     function startProposalRegistration() external onlyOwner {
         require(currentStatus == WorkflowStatus.RegisteringVoters,"the current workflow status does not allow you to start registering proposals");
         
@@ -59,7 +75,8 @@ contract Voting is Ownable {
         emit WorkflowStatusChange(WorkflowStatus.RegisteringVoters, WorkflowStatus.ProposalsRegistrationStarted);
     }
 
-
+    /// @notice pour déposer des propositions
+    /// @param _proposal string qui contient la description de la proposition
     function depositProposal(string calldata _proposal) external {
         require(voters[msg.sender].isRegistered == true, "this address is not whitelisted");
         require(currentStatus == WorkflowStatus.ProposalsRegistrationStarted, 
@@ -70,7 +87,8 @@ contract Voting is Ownable {
         emit ProposalRegistered(numberOfProposals);
         numberOfProposals += 1;
     }
-
+     /// @notice pour obtenir la liste des propositions et l'id associé
+     /// @return  arrayOfProposals tableau avec les propositions et leur id associés
     function getArrayOfProposals() external view returns (Proposal[] memory) {
         Proposal[] memory arrayOfProposals = new Proposal[](proposals.length);
         for (uint256 i = 0; i < proposals.length; i++) {
@@ -78,7 +96,7 @@ contract Voting is Ownable {
         }
         return arrayOfProposals;
     }
-
+     /// @notice pour stoper l'enregistrement des propositions
     function endProposalRegistration() external onlyOwner {
         require(currentStatus == WorkflowStatus.ProposalsRegistrationStarted,
         "the current workflow status does not allow you to stop registering proposals"
@@ -87,6 +105,7 @@ contract Voting is Ownable {
         emit WorkflowStatusChange(WorkflowStatus.ProposalsRegistrationStarted, WorkflowStatus.ProposalsRegistrationEnded);
     }
 
+    /// @notice pour demarrer la session de vote 
     function startVotingSession() external onlyOwner {
         require(currentStatus == WorkflowStatus.ProposalsRegistrationEnded, "the current workflow status does not allow you to start voting session");
         currentStatus = WorkflowStatus.VotingSessionStarted;
@@ -96,6 +115,8 @@ contract Voting is Ownable {
         );
     }
 
+     /// @notice pour voter
+     /// @param _proposalId uint pour laquelle le votant vote
     function voteFor(uint256 _proposalId) external {
         require(voters[msg.sender].isRegistered == true, "this address is not whitelisted");
         require(currentStatus == WorkflowStatus.VotingSessionStarted, "the current workflow status does not allow you to vote");
@@ -109,7 +130,7 @@ contract Voting is Ownable {
         emit Voted(msg.sender, _proposalId);
     }
 
-
+     /// @notice met fin a la session de vote
     function endVotingSession() external onlyOwner {
         require(currentStatus == WorkflowStatus.VotingSessionStarted, "the current workflow status does not allow you to stop voting session");
         currentStatus = WorkflowStatus.VotingSessionEnded;
@@ -119,7 +140,7 @@ contract Voting is Ownable {
         );
     }
 
-
+     /// @notice lance le comptage du vote
     function countedVotes() external onlyOwner {
         require(currentStatus == WorkflowStatus.VotingSessionEnded, "the current workflow status does not allow you to counted the votes");
 
@@ -129,15 +150,16 @@ contract Voting is Ownable {
             // simplification, ne prends pas en compte la possibilité d'une égalié
             if (proposals[i].voteCount > voteMax) {
                 voteMax = proposals[i].voteCount;
-                winningProposalId = i;
+                winnerId = i;
             }
         }
         currentStatus = WorkflowStatus.VotesTallied;
         emit WorkflowStatusChange(WorkflowStatus.VotingSessionEnded, WorkflowStatus.VotesTallied);
     }
-
-    function getWinner() external view returns (string memory, uint256) {
+     /// @notice pour obtenir la proposition gagnante
+     /// @return  winnerIdAndDescription 
+    function getWinner() external view returns (uint256) {
         require(currentStatus == WorkflowStatus.VotesTallied,"the current workflow status does not allow you to get the winner");
-        return (proposals[winningProposalId].description,proposals[winningProposalId].voteCount);
+        return winnerId;
     }
 }
