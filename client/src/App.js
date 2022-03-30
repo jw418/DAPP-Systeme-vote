@@ -292,8 +292,7 @@ class App extends Component {
             </Card.Body>
           </Card>
           </div>
-        <br></br>
-      
+        <br></br>      
 
       </div>
 

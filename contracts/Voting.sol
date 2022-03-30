@@ -56,6 +56,7 @@ contract Voting is Ownable {
         require(!voters[_address].isRegistered,"This voters is already registered");
         
         voters[_address].isRegistered = true;
+        addresses.push(_address);
         
         emit VoterRegistered(_address);
     }
