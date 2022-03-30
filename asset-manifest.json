@@ -1,0 +1,24 @@
+{
+  "files": {
+    "main.css": "/[jw418].github.io/[DAPP-Systeme-vote]/static/css/main.b100e6da.chunk.css",
+    "main.js": "/[jw418].github.io/[DAPP-Systeme-vote]/static/js/main.23eb1dfc.chunk.js",
+    "main.js.map": "/[jw418].github.io/[DAPP-Systeme-vote]/static/js/main.23eb1dfc.chunk.js.map",
+    "runtime-main.js": "/[jw418].github.io/[DAPP-Systeme-vote]/static/js/runtime-main.8cd58e58.js",
+    "runtime-main.js.map": "/[jw418].github.io/[DAPP-Systeme-vote]/static/js/runtime-main.8cd58e58.js.map",
+    "static/css/2.37c457eb.chunk.css": "/[jw418].github.io/[DAPP-Systeme-vote]/static/css/2.37c457eb.chunk.css",
+    "static/js/2.04f656ef.chunk.js": "/[jw418].github.io/[DAPP-Systeme-vote]/static/js/2.04f656ef.chunk.js",
+    "static/js/2.04f656ef.chunk.js.map": "/[jw418].github.io/[DAPP-Systeme-vote]/static/js/2.04f656ef.chunk.js.map",
+    "index.html": "/[jw418].github.io/[DAPP-Systeme-vote]/index.html",
+    "precache-manifest.9b35617ab854f65c3bd5ca2e264560ad.js": "/[jw418].github.io/[DAPP-Systeme-vote]/precache-manifest.9b35617ab854f65c3bd5ca2e264560ad.js",
+    "service-worker.js": "/[jw418].github.io/[DAPP-Systeme-vote]/service-worker.js",
+    "static/css/2.37c457eb.chunk.css.map": "/[jw418].github.io/[DAPP-Systeme-vote]/static/css/2.37c457eb.chunk.css.map",
+    "static/css/main.b100e6da.chunk.css.map": "/[jw418].github.io/[DAPP-Systeme-vote]/static/css/main.b100e6da.chunk.css.map"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.8cd58e58.js",
+    "static/css/2.37c457eb.chunk.css",
+    "static/js/2.04f656ef.chunk.js",
+    "static/css/main.b100e6da.chunk.css",
+    "static/js/main.23eb1dfc.chunk.js"
+  ]
+}
