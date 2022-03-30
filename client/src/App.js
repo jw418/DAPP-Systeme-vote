@@ -53,7 +53,10 @@ class App extends Component {
     const whitelist = await contract.methods.getAddresses().call();
     // Mettre à jour le state 
     this.setState({ whitelist: whitelist });
-
+  }
+  
+  runGetwinner = async() => {
+    const { contract } = this.state;
     // récupérer la liste des comptes autorisés
     const winnerid = await contract.methods.getWinner().call();
     // Mettre à jour le state 
@@ -99,6 +102,7 @@ class App extends Component {
     const { accounts, contract} = this.state;  
     const vote = this.vote.value;  
     await contract.methods.voteFor(vote).send({from: accounts[0]});
+    this.runInit();
   }
 
   stopvote = async() => {
@@ -109,6 +113,8 @@ class App extends Component {
   countedtailes = async() => {
     const { accounts, contract} = this.state;
     await contract.methods.countedVotes().send({from: accounts[0]});
+    this.runInit();
+    this.runGetwinner();
   }
     
 
@@ -277,18 +283,14 @@ class App extends Component {
           </div>
         <br></br>
 
-        <div style={{display: 'flex', justifyContent: 'center'}}>
+        <div  align='center' style={{display: 'flex', justifyContent: 'center'}}>
           <Card style={{ width: '50rem' }}>
-            <Card.Header><strong>Proposition gagnante</strong></Card.Header>            
-            <Card.Body>          
-              <Button onClick={ this.winnerid} variant="dark" > Compter </Button>
-            </Card.Body>
+            <Card.Header><strong>Proposition gagnante</strong></Card.Header>                        
             <Card.Body>
-            <tbody>
-                      {winnerid !== null && 
-                        winnerid.map((a) => <tr><td>{a}</td></tr>)
-                      }
-                    </tbody>
+            <Button onClick={ this.runGetwinner} variant="dark" > Résultat </Button>
+            <tbody>              
+                  la proposition gagnante est la numéro : #{winnerid} {this.runGetwinner}              
+            </tbody>
             </Card.Body>
           </Card>
           </div>
